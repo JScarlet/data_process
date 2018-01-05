@@ -1,7 +1,7 @@
 import json
 import sys
 
-from data_export import write_json_to_file
+from util.json_util import write_json_to_file
 from util.code_text_process import clean_html_text_with_replacement
 from util.html_relation_extractor import extract_relation_from_html
 
