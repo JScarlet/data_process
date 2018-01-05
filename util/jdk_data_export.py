@@ -1,6 +1,11 @@
-import json
+import sys
 
 import pymysql
+
+from util.code_text_process import clean_html_text
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 conn = pymysql.connect(
     host='10.141.221.73',
@@ -13,7 +18,28 @@ conn = pymysql.connect(
 
 cur = conn.cursor()
 
-def package_data_process():
+
+def html_data_process():
+    '''export all html text as a json array'''
+    result = []
+    try:
+        cur.execute("select doc_website, html_body from javadoc_body")
+        lists = cur.fetchall()
+        for each_list in lists:
+            temp = {}
+            doc_website = each_list[0]
+            html_body = each_list[1]
+
+            temp["doc_website"] = doc_website
+            temp["html_body"] = html_body
+            result.append(temp)
+    except Exception as e:
+        print(Exception, ": ", e)
+    return result
+
+
+def export_package_name_json():
+    '''export all package Name into a json array'''
     result = []
     try:
         cur.execute("select name, library_id from jdk_package")
@@ -26,16 +52,17 @@ def package_data_process():
             cur.execute(sql)
             library_query = cur.fetchall()
             jdk_version = "jdk" + str(library_query[0][0])
-            temp.setdefault("name", name)
-            temp.setdefault("type", "package")
-            temp.setdefault("parent_API", jdk_version)
+            temp["name"] = name
+            temp["type"] = "package"
+            temp["parent_API"] = jdk_version
             result.append(temp)
     except Exception as e:
         print(Exception, ": ", e)
     return result
 
 
-def class_data_process():
+def export_class_name_json():
+    '''export all class Name into a json array'''
     result = []
     try:
         cur.execute("select name, package_id from jdk_class")
@@ -48,23 +75,23 @@ def class_data_process():
             cur.execute(sql)
             package_query = cur.fetchone()
             package_name = package_query[0]
-            temp.setdefault("name", name)
-            temp.setdefault("type", "class")
-            temp.setdefault("parent_API", package_name)
+            temp["name"] = name
+            temp["type"] = "class"
+            temp["parent_API"] = package_name
             result.append(temp)
     except Exception as e:
         print(Exception, ": ", e)
     return result
 
 
-def method_data_process():
+def export_method_name_json():
     result = []
     try:
-        cur.execute("select handled_full_declaration, name, type, class_id from jdk_method")
+        cur.execute("select full_declaration, name, type, class_id from jdk_method")
         lists = cur.fetchall()
         for each_list in lists:
             temp = {}
-            handled_full_declaration = each_list[0]
+            full_declaration = each_list[0]
             name = each_list[1]
             type = each_list[2]
             class_id = each_list[3]
@@ -72,29 +99,14 @@ def method_data_process():
             cur.execute(sql)
             class_query = cur.fetchone()
             class_name = class_query[0]
-            if handled_full_declaration is None:
-                temp.setdefault("name", name)
+            if full_declaration is None:
+                temp["name"] = name
             else:
-                temp.setdefault("name", handled_full_declaration)
-            temp.setdefault("type", type)
-            temp.setdefault("parent_API", class_name)
+                temp["name"] = clean_html_text(full_declaration)
+            temp["type"] = type
+            temp["parent_API"] = class_name
             result.append(temp)
 
     except Exception as e:
         print(Exception, ": ", e)
     return result
-
-
-def write_in_file(data):
-    with open("API_name.json", 'w') as file_object:
-        json.dump(data, file_object)
-
-if __name__ == "__main__":
-    package_result = package_data_process()
-    #print(package_result)
-    class_result = class_data_process()
-    #print(class_result)
-    method_result = method_data_process()
-    #print(method_result)
-    result = package_result + class_result + method_result
-    write_in_file(result)
