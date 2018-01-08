@@ -2,7 +2,7 @@ import sys
 
 import pymysql
 
-from util.code_text_process import clean_html_text
+from util.code_text_process import clean_html_text, clean_html_text_with_replacement
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -133,7 +133,7 @@ def export_package_short_description_from_jdk():
             temp["API_Type"] = "package"
             temp["text_title"] = "description"
             temp["sub_title"] = name
-            temp["text"] = clean_html_text(description)
+            temp["text"] = clean_html_text_with_replacement(description)
             temp["knowledge_pattern"] = "functionality and behavior"
 
             result.append(temp)
@@ -163,7 +163,7 @@ def export_package_detail_description_from_jdk():
             temp["API_Type"] = "package"
             temp["text_title"] = "description"
             temp["sub_title"] = name
-            temp["text"] = clean_html_text(description)
+            temp["text"] = clean_html_text_with_replacement(description)
 
             result.append(temp)
 
@@ -199,7 +199,7 @@ def export_exception_throw_from_method_for_jdk():
             temp["API_Type"] = "method"
             temp["text_title"] = "throws"
             temp["sub_title"] = name
-            temp["text"] = clean_html_text(Description)
+            temp["text"] = clean_html_text_with_replacement(Description)
             temp["knowledge_pattern"] = "directive"
 
             result.append(temp)

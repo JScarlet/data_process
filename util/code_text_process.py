@@ -1,9 +1,12 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import re
+
 import nltk
 from bs4 import BeautifulSoup
 
 tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+pattern = re.compile(r'\s+')
 
 
 def sentence_split(text):
@@ -16,7 +19,7 @@ def clean_format(text):
     :param text:
     :return:
     '''
-    return text.replace('\n', ' ').replace("  ", ' ').replace(u'\u00a0', " ")
+    return re.sub(pattern, " ", text.replace('\n', ' ').replace(u'\u00a0', " "))
 
 
 def clean_html_text(html_text):
