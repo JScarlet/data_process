@@ -71,5 +71,5 @@ if __name__ == "__main__":
 
     result = __parse_to_json(result)
     for jdk_api_name in result:
-        jdk_api_name['name'] = __clean_api_name_string(jdk_api_name)
+        jdk_api_name['name'] = __clean_api_name_string(jdk_api_name['name'])
     write_json_to_file("JDK_API_name.json", result)
