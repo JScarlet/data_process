@@ -16,7 +16,7 @@ def clean_format(text):
     :param text:
     :return:
     '''
-    return text.replace('\n', ' ').replace("  ", ' ')
+    return text.replace('\n', ' ').replace("  ", ' ').replace(u'\u00a0', " ")
 
 
 def clean_html_text(html_text):
@@ -36,7 +36,7 @@ def clean_html_text_with_replacement(html_text):
         return ""
 
     soup = BeautifulSoup(html_text, "lxml")
-    codeTags = soup.find_all(name=["pre",'blockquote'])
+    codeTags = soup.find_all(name=["pre", 'blockquote'])
 
     for tag in codeTags:
         tag.string = "@C@ . "
