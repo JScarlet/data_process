@@ -123,7 +123,6 @@ def export_package_short_description_from_jdk():
             name = each_list[0]
             description = each_list[1]
             library_id = each_list[2]
-            ## todo
             sql = "select jdk_version from jdk_library where library_id = " + str(library_id)
             cur.execute(sql)
             library_query = cur.fetchall()
