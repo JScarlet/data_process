@@ -49,7 +49,7 @@ def __extract_link_relation_from_link(code_element_link, base_url):
         return result
 
     if link.startswith("http"):
-        if '/guide/' in link:
+        if '/guide/' in link or '/guides/' in link:
             r = Relation(subject=subject, relation='has guide in', object=link)
         else:
             r = Relation(subject=subject, relation='has hyperlink to', object=link)
