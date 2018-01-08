@@ -50,7 +50,7 @@ def __reduce_duplicate(api_item_jsons):
 
 
 def __clean_api_name_string(api_name):
-    return re.sub(r'\s+', ' ', api_name).replace(u'\u00a0', " ")
+    return re.sub(r'\s+', ' ', api_name.replace(u'\u00a0', " "))
 
 
 def __parse_to_json(api_item_list):
