@@ -295,13 +295,13 @@ def export_class_see_also_relation_from_jdk():
     '''export see also relation from jdk'''
     result = []
     try:
-        cur.execute("select See_also_title,Class_id from jdk_class_see_also")
+        cur.execute("select See_also_title,Class_id,See_also_website from jdk_class_see_also")
         lists = cur.fetchall()
         for each_list in lists:
             temp = {}
             name = each_list[0]
             class_id = each_list[1]
-
+            see_also_website= each_list[2]
             name = clean_html_text(name)
             if name is None or name is "":
                 continue
@@ -312,6 +312,48 @@ def export_class_see_also_relation_from_jdk():
             class_name = class_query[0]
 
             result.append(Relation(subject=class_name, relation="see also", object=name))
+            result.append(
+                Relation(subject=class_name, relation="has see-also hyperlink", object=see_also_website))
+            result.append(Relation(subject=name, relation="has hyperlink to", object=see_also_website))
+
+    except Exception as e:
+        print(Exception, ": ", e)
+    return result
+
+
+def export_method_see_also_relation_from_jdk():
+    '''export see also relation from jdk'''
+    result = []
+    try:
+        cur.execute("select See_also_title,Class_id,Method_id,See_also_website from jdk_method_see_also")
+        lists = cur.fetchall()
+        for each_list in lists:
+            name = each_list[0]
+            class_id = each_list[1]
+            method_id = each_list[2]
+            see_also_website = each_list[3]
+            name = clean_html_text(name)
+            if name is None or name is "":
+                continue
+
+            sql = "select name from jdk_class where class_id = " + str(class_id)
+            cur.execute(sql)
+            class_query = cur.fetchone()
+            class_name = class_query[0]
+
+            sql = "select name from jdk_method where method_id = " + str(method_id)
+            cur.execute(sql)
+            method_query = cur.fetchone()
+            method_name = method_query[0]
+            method_name = clean_html_text(method_name)
+
+            full_method_name = class_name + "." + method_name + "()"
+
+            result.append(Relation(subject=full_method_name, relation="method short name", object=name))
+            result.append(Relation(subject=full_method_name, relation="see also", object=name))
+            result.append(
+                Relation(subject=full_method_name, relation="has see-also hyperlink", object=see_also_website))
+            result.append(Relation(subject=name, relation="has hyperlink to", object=see_also_website))
 
     except Exception as e:
         print(Exception, ": ", e)
