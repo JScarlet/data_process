@@ -136,6 +136,7 @@ def export_package_short_description_from_jdk():
             jdk_version = "jdk" + str(library_query[0][0])
 
             temp["API_name"] = name
+            temp["API_name_full_declaration"] = name
             temp["parent_API_name"] = jdk_version
             temp["API_Type"] = "Package"
             temp["text_title"] = "description"
@@ -171,6 +172,7 @@ def export_package_detail_description_from_jdk():
             jdk_version = "jdk" + str(library_query[0][0])
 
             temp["API_name"] = name
+            temp["API_name_full_declaration"] = name
             temp["parent_API_name"] = jdk_version
             temp["API_Type"] = "Package"
             temp["text_title"] = "description"
@@ -206,7 +208,8 @@ def export_exception_throw_from_method_for_jdk():
             method_name = method_query[0]
             method_name = clean_html_text(method_name)
 
-            temp["API_name"] = method_name
+            temp["API_name"] = class_name + "." + method_name + "()"
+            temp["API_name_full_declaration"] = method_name
             temp["parent_API_name"] = class_name
             temp["API_Type"] = "Method"
             temp["text_title"] = "throws"
@@ -243,6 +246,7 @@ def export_class_short_description_from_jdk():
             package_name = str(package_query[0][0])
 
             temp["API_name"] = name
+            temp["API_name_full_declaration"] = name
             temp["parent_API_name"] = package_name
             temp["API_Type"] = type
             temp["text_title"] = "description"
@@ -279,10 +283,51 @@ def export_class_detail_description_from_jdk():
             package_name = str(package_query[0][0])
 
             temp["API_name"] = name
+            temp["API_name_full_declaration"] = name
             temp["parent_API_name"] = package_name
             temp["API_Type"] = type
             temp["text_title"] = "description"
             temp["text"] = description
+
+            result.append(temp)
+
+    except Exception as e:
+        print(Exception, ": ", e)
+    return result
+
+
+def export_method_detail_description_from_jdk():
+    '''export the short description from jdk for method'''
+    result = []
+    try:
+        cur.execute("select name,Description,Class_id,Type,Full_declaration from jdk_method")
+        lists = cur.fetchall()
+        for each_list in lists:
+            temp = {}
+            name = each_list[0]
+            description = each_list[1]
+            description = clean_html_text(description)
+            if description is None or description is "":
+                continue
+            class_id = each_list[2]
+            type = each_list[3]
+            full_declaration = clean_html_text(each_list[4])
+
+            sql = "select name from jdk_class where class_id = " + str(class_id)
+            cur.execute(sql)
+            class_query = cur.fetchall()
+            class_name = str(class_query[0][0])
+
+            if type == "Method":
+                temp["API_name"] = class_name + "." + name + "()"
+            else:
+                temp["API_name"] = class_name + "." + name
+            temp["API_name_full_declaration"] = full_declaration
+            temp["parent_API_name"] = class_name
+            temp["API_Type"] = type
+            temp["text_title"] = "description"
+            temp["text"] = description
+            temp["knowledge_pattern"] = "functionality and behavior"
 
             result.append(temp)
 
