@@ -301,7 +301,7 @@ def export_class_see_also_relation_from_jdk():
             temp = {}
             name = each_list[0]
             class_id = each_list[1]
-            see_also_website= each_list[2]
+            see_also_website = each_list[2]
             name = clean_html_text(name)
             if name is None or name is "":
                 continue
@@ -346,10 +346,12 @@ def export_method_see_also_relation_from_jdk():
             method_query = cur.fetchone()
             method_name = method_query[0]
             method_name = clean_html_text(method_name)
+            if method_name.upper() == method_name:
+                full_method_name = class_name + "." + method_name
+            else:
+                full_method_name = class_name + "." + method_name + "()"
 
-            full_method_name = class_name + "." + method_name + "()"
-
-            result.append(Relation(subject=full_method_name, relation="method short name", object=name))
+            result.append(Relation(subject=full_method_name, relation="short name", object=name))
             result.append(Relation(subject=full_method_name, relation="see also", object=name))
             result.append(
                 Relation(subject=full_method_name, relation="has see-also hyperlink", object=see_also_website))
