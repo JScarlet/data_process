@@ -1,0 +1,6 @@
+from util.jdk_data_export import export_return_description_from_method_for_jdk
+from util.json_util import write_json_to_file
+
+description_json = export_return_description_from_method_for_jdk()
+
+write_json_to_file("jdk_method_return_description.json", description_json)
