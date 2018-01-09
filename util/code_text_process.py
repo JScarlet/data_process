@@ -23,6 +23,8 @@ def clean_format(text):
 
 
 def clean_html_text(html_text):
+    if html_text is None or html_text == "":
+        return ""
     soup = BeautifulSoup(html_text, "lxml")
     cleanText = soup.get_text()
     cleanText = clean_format(cleanText)
