@@ -303,34 +303,36 @@ def export_method_detail_description_from_jdk():
         cur.execute("select name,Description,Class_id,Type,Full_declaration from jdk_method")
         lists = cur.fetchall()
         for each_list in lists:
-            temp = {}
-            name = each_list[0]
-            description = each_list[1]
-            description = clean_html_text(description)
-            if description is None or description is "":
-                continue
-            class_id = each_list[2]
-            type = each_list[3]
-            full_declaration = clean_html_text(each_list[4])
-            if full_declaration is None or full_declaration is "":
-                continue
-            sql = "select name from jdk_class where class_id = " + str(class_id)
-            cur.execute(sql)
-            class_query = cur.fetchall()
-            class_name = str(class_query[0][0])
+            try:
+                temp = {}
+                name = each_list[0]
+                description = each_list[1]
+                description = clean_html_text_with_replacement(description)
+                if description is None or description is "":
+                    continue
+                class_id = each_list[2]
+                type = each_list[3]
+                full_declaration = clean_html_text(each_list[4])
+                if full_declaration is None or full_declaration is "":
+                    continue
+                sql = "select name from jdk_class where class_id = " + str(class_id)
+                cur.execute(sql)
+                class_query = cur.fetchall()
+                class_name = str(class_query[0][0])
 
-            if type == "Method":
-                temp["API_name"] = class_name + "." + name + "()"
-            else:
-                temp["API_name"] = class_name + "." + name
-            temp["API_name_full_declaration"] = full_declaration
-            temp["parent_API_name"] = class_name
-            temp["API_Type"] = type
-            temp["text_title"] = "description"
-            temp["text"] = description
+                if type == "Method":
+                    temp["API_name"] = class_name + "." + name + "()"
+                else:
+                    temp["API_name"] = class_name + "." + name
+                temp["API_name_full_declaration"] = full_declaration
+                temp["parent_API_name"] = class_name
+                temp["API_Type"] = type
+                temp["text_title"] = "description"
+                temp["text"] = description
 
-            result.append(temp)
-
+                result.append(temp)
+            except Exception as e:
+                print(Exception, ": ", e)
     except Exception as e:
         print(Exception, ": ", e)
     return result
@@ -407,43 +409,6 @@ def export_method_see_also_relation_from_jdk():
     return result
 
 
-def export_exception_throw_from_method_for_jdk():
-    result = []
-    try:
-        cur.execute("select Name, Class_id,Method_id, Description from jdk_exception")
-        lists = cur.fetchall()
-        for each_list in lists:
-            temp = {}
-            name = each_list[0]
-            Class_id = each_list[1]
-            Method_id = each_list[2]
-            Description = each_list[3]
-            sql = "select name from jdk_class where class_id = " + str(Class_id)
-            cur.execute(sql)
-            class_query = cur.fetchone()
-            class_name = class_query[0]
-
-            sql = "select name from jdk_method where method_id = " + str(Method_id)
-            cur.execute(sql)
-            method_query = cur.fetchone()
-            method_name = method_query[0]
-            method_name = clean_html_text(method_name)
-
-            temp["API_name"] = method_name
-            temp["parent_API_name"] = class_name
-            temp["API_Type"] = "Method"
-            temp["text_title"] = "throws"
-            temp["sub_title"] = name
-            temp["text"] = clean_html_text_with_replacement(Description)
-            temp["knowledge_pattern"] = "directive"
-
-            result.append(temp)
-
-    except Exception as e:
-        print(Exception, ": ", e)
-    return result
-
-
 def export_return_description_from_method_for_jdk():
     '''export the short description from jdk for method'''
     result = []
@@ -455,7 +420,7 @@ def export_return_description_from_method_for_jdk():
                 temp = {}
                 name = each_list[0]
                 description = each_list[1]
-                description = clean_html_text(description)
+                description = clean_html_text_with_replacement(description)
                 if description is None or description is "":
                     continue
                 class_id = each_list[2]
