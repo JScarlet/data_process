@@ -17,7 +17,8 @@ json_file_name = sys.argv[1]
 with open(json_file_name, 'r') as f:
     data = json.load(f)
 
-with codecs.open('jdk_corpus.txt', 'w', 'utf-8') as corpus_file:
+out_put_file_name = sys.argv[2]
+with codecs.open(out_put_file_name, 'w', 'utf-8') as corpus_file:
     for text_part_json in data:
-        corpus_file.writelines(text_part_json['text'].replace('\n', " "))
-        corpus_file.write("\n")
+        corpus_file.write(text_part_json['text'])
+        corpus_file.write("\n\n")

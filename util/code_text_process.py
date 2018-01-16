@@ -3,7 +3,7 @@
 import re
 
 import nltk
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
 pattern = re.compile(r'\s+')
@@ -41,6 +41,15 @@ def clean_html_text_with_replacement(html_text):
         return ""
 
     soup = BeautifulSoup(html_text, "lxml")
+
+    contain_tags = soup.find_all("div", class_="contentContainer")
+    if contain_tags and len(contain_tags) >= 1:
+        for contain_tag in contain_tags:
+            soup = contain_tag
+    all_comments = soup.find_all(string=lambda text: isinstance(text, Comment))
+    for comment in all_comments:
+        comment.extract()
+
     codeTags = soup.find_all(name=["pre", 'blockquote'])
 
     for tag in codeTags:
@@ -58,4 +67,5 @@ def clean_html_text_with_replacement(html_text):
 
     cleanText = soup.get_text()
     cleanText = clean_format(cleanText)
+
     return cleanText
