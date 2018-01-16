@@ -16,6 +16,6 @@ corpus_file_name = sys.argv[1]
 with codecs.open(corpus_file_name, 'r', 'utf-8') as corpus_file:
     lee_data = LineSentence(corpus_file)
     model_gensim = FT_gensim(size=100, min_count=2)
-    # train the model
-    model_gensim.train(lee_data)
+    model_gensim.build_vocab(lee_data)
+    model_gensim.train(lee_data, total_examples=model_gensim.corpus_count, epochs=model_gensim.iter)
     model_gensim.save('saved_model_for_jdk_corpus')
