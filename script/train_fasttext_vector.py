@@ -15,6 +15,8 @@ corpus_file_name = sys.argv[1]
 lee_data = LineSentence(corpus_file_name)
 model_gensim = FT_gensim(size=100, min_count=1)
 model_gensim.build_vocab(lee_data)
+print model_gensim
 model_gensim.train(lee_data, total_examples=model_gensim.corpus_count, epochs=model_gensim.iter)
+print model_gensim
 print "done training"
 model_gensim.save('saved_model_for_jdk_corpus')
