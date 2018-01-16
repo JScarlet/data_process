@@ -13,7 +13,7 @@ if len(sys.argv) <= 1:
     sys.exit(1)
 corpus_file_name = sys.argv[1]
 lee_data = LineSentence(corpus_file_name)
-model_gensim = FT_gensim(size=100, min_count=2)
+model_gensim = FT_gensim(size=100, min_count=1)
 model_gensim.build_vocab(lee_data)
 model_gensim.train(lee_data, total_examples=model_gensim.corpus_count, epochs=model_gensim.iter)
 model_gensim.save('saved_model_for_jdk_corpus')
