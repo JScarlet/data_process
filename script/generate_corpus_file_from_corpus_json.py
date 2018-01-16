@@ -4,6 +4,8 @@ import codecs
 import json
 import sys
 
+from util.code_text_process import sentence_split
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -20,5 +22,8 @@ with open(json_file_name, 'r') as f:
 out_put_file_name = sys.argv[2]
 with codecs.open(out_put_file_name, 'w', 'utf-8') as corpus_file:
     for text_part_json in data:
-        corpus_file.write(text_part_json['text'])
-        corpus_file.write("\n\n")
+        all_text = text_part_json['text']
+        sentences = sentence_split(all_text)
+        for sentence in sentences:
+            corpus_file.write(sentence)
+            corpus_file.write("\n")
