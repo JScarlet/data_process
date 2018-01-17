@@ -4,7 +4,7 @@ import codecs
 import json
 import sys
 
-import fasttext
+import fastText
 
 
 def __read_json_from_file(file_name):
@@ -29,7 +29,7 @@ if len(sys.argv) <= 2:
 
 model_file_path = sys.argv[1]
 json_path = sys.argv[2]
-sentence_model = fasttext.load_model(model_file_path)
+sentence_model = fastText.load_model(model_file_path)
 
 api_json_data = __read_json_from_file(json_path)
 for api_json_data_item in api_json_data:
