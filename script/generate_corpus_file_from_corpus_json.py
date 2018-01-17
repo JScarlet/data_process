@@ -14,7 +14,7 @@ if len(sys.argv) <= 1:
 json_file_name = sys.argv[1]
 
 # Reading data back
-with open(json_file_name, 'r') as f:
+with codecs.open(json_file_name, 'r', 'utf-8') as f:
     data = json.load(f)
 
 out_put_file_name = sys.argv[2]
