@@ -19,6 +19,6 @@ print model_gensim
 model_gensim.train(lee_data, total_examples=model_gensim.corpus_count, epochs=model_gensim.iter)
 print model_gensim
 print "done training"
-test_vector = model_gensim.word_vec('JDK')
+test_vector = model_gensim.word_vec('JDK_corpus')
 print model_gensim
 model_gensim.save('saved_model_for_jdk_corpus')
