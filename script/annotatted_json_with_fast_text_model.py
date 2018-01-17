@@ -34,7 +34,7 @@ sentence_model = fastText.load_model(model_file_path)
 api_json_data = __read_json_from_file(json_path)
 for api_json_data_item in api_json_data:
     api_text = api_json_data_item["text"]
-    api_text = api_text.split("\n", " ")
+    api_text = api_text.replace("\n", " ")
 
     label, probability = sentence_model.predict(api_text, k=1, threshold=0.0)
     probability = probability.tolist()
