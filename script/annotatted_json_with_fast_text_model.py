@@ -14,6 +14,12 @@ def __read_json_from_file(file_name):
     return data
 
 
+def __write_json_to_file(file_name, data):
+    with codecs.open(file_name, 'w', encoding='utf8') as json_file:
+        data = json.dumps(data, ensure_ascii=False, encoding='utf8')
+        json_file.write(unicode(data))
+
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -33,5 +39,6 @@ for api_json_data_item in api_json_data:
     label, probability = sentence_model.predict(api_text, k=1, threshold=0.0)
     probability = probability.tolist()
 
-    sentence_model["knowledge_pattern"] = label.replace('__label__', "").replace("_", " ")
-    sentence_model["knowledge_pattern_probability"] = probability
+    api_json_data["knowledge_pattern"] = label.replace('__label__', "").replace("_", " ")
+    api_json_data["knowledge_pattern_probability"] = probability
+__write_json_to_file("fasttext_annotated_" + json_path, api_json_data)
