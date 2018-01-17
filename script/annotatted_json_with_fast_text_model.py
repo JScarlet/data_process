@@ -39,6 +39,6 @@ for api_json_data_item in api_json_data:
     label, probability = sentence_model.predict(api_text, k=1, threshold=0.0)
     probability = probability.tolist()
 
-    api_json_data["knowledge_pattern"] = label.replace('__label__', "").replace("_", " ")
-    api_json_data["knowledge_pattern_probability"] = probability
+    api_json_data_item["knowledge_pattern"] = label[0].replace('__label__', "").replace("_", " ")
+    api_json_data_item["knowledge_pattern_probability"] = probability
 __write_json_to_file("fasttext_annotated_" + json_path, api_json_data)
