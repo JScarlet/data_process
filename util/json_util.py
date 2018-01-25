@@ -41,6 +41,80 @@ def api_text_json_sentence_split(input_json_file, output_json_file=None):
     write_json_to_file(output_json_file, result_json)
 
 
+def generate_annotated_json_object(data_json):
+    result_json = []
+    for each_data in data_json:
+        team = each_data.copy()
+        text = team["text"]
+        words = text.split(" ")
+
+        if "sentence_index" not in team.keys():
+            team["sentence_index"] = 1
+
+        team["knowledge_pattern"] = "others"
+
+        if "sentence_index" not in team.keys():
+            team["sentence_index"] = 1
+        if team["text_title"] == "description":
+            sentence_index = team["sentence_index"]
+
+            directive_word_list = ["must", "should", "can't", "mustn't", "shouldn't", "if", "If", "throw", "throws",
+                                   "thrown"]
+            for directive_word in directive_word_list:
+                if directive_word in words:
+                    team["knowledge_pattern"] = "directive"
+                    break
+
+            if sentence_index == 1 and team["knowledge_pattern"] != "directive":
+                team["knowledge_pattern"] = "functionality and behavior"
+            else:
+                team["knowledge_pattern"] = "others"
+        if team["text_title"] == "parameters" or team["text_title"] == "returns":
+            team["knowledge_pattern"] = "value instance description"
+        if team["text_title"] == "throws":
+            team["knowledge_pattern"] = "directive"
+        if team["knowledge_pattern"] == "others":
+            directive_word_list = ["must", "should", "can't", "mustn't", "shouldn't", "if", "If", "throw", "throws",
+                                   "thrown"]
+            for directive_word in directive_word_list:
+                if directive_word in words:
+                    team["knowledge_pattern"] = "directive"
+                    break
+            # et. "Event is xxxx"
+            if len(words) >= 2:
+                if words[1] == "is" or words[1] == "are":
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+
+            # et. "Key Event is xxxx"
+            if len(words) >= 3:
+                if words[2] == "is" or words[2] == "are":
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+
+            # et. "The Event is xxxx"
+            if len(words) >= 3:
+                # the
+                is_start_with_dep_type_word = (
+                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                is_be_word_in_position = (words[2] == "is" or words[2] == "are")
+                if is_be_word_in_position and is_start_with_dep_type_word:
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+            # et. "The Key Event is xxxx"
+            if len(words) >= 4:
+                # the
+                is_start_with_dep_type_word = (
+                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                is_be_word_in_position = (words[3] == "is" or words[3] == "are")
+                if is_be_word_in_position and is_start_with_dep_type_word:
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+
+        result_json.append(team)
+    return result_json
+
+
 def annotated_by_sentence_index(input_json_file, output_json_file=None):
     if output_json_file is None:
         output_json_file = "annotated_" + input_json_file
@@ -48,14 +122,71 @@ def annotated_by_sentence_index(input_json_file, output_json_file=None):
     data_json = read_json_from_file(input_json_file)
     for each_data in data_json:
         team = each_data.copy()
+        text = team["text"]
+        words = text.split(" ")
+
         if "sentence_index" not in team.keys():
             team["sentence_index"] = 1
-        if "knowledge_pattern" not in team.keys():
+
+        team["knowledge_pattern"] = "others"
+
+        if "sentence_index" not in team.keys():
+            team["sentence_index"] = 1
+        if team["text_title"] == "description":
             sentence_index = team["sentence_index"]
-            if sentence_index == 1:
+
+            directive_word_list = ["must", "should", "can't", "mustn't", "shouldn't", "if", "If", "throw", "throws",
+                                   "thrown"]
+            for directive_word in directive_word_list:
+                if directive_word in words:
+                    team["knowledge_pattern"] = "directive"
+                    break
+
+            if sentence_index == 1 and team["knowledge_pattern"] != "directive":
                 team["knowledge_pattern"] = "functionality and behavior"
             else:
                 team["knowledge_pattern"] = "others"
+        if team["text_title"] == "parameters" or team["text_title"] == "returns":
+            team["knowledge_pattern"] = "value instance description"
+        if team["text_title"] == "throws":
+            team["knowledge_pattern"] = "directive"
+        if team["knowledge_pattern"] == "others":
+            directive_word_list = ["must", "should", "can't", "mustn't", "shouldn't", "if", "If", "throw", "throws",
+                                   "thrown"]
+            for directive_word in directive_word_list:
+                if directive_word in words:
+                    team["knowledge_pattern"] = "directive"
+                    break
+            # et. "Event is xxxx"
+            if len(words) >= 2:
+                if words[1] == "is" or words[1] == "are":
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+
+            # et. "Key Event is xxxx"
+            if len(words) >= 3:
+                if words[2] == "is" or words[2] == "are":
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+
+            # et. "The Event is xxxx"
+            if len(words) >= 3:
+                # the
+                is_start_with_dep_type_word = (
+                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                is_be_word_in_position = (words[2] == "is" or words[2] == "are")
+                if is_be_word_in_position and is_start_with_dep_type_word:
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
+            # et. "The Key Event is xxxx"
+            if len(words) >= 4:
+                # the
+                is_start_with_dep_type_word = (
+                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                is_be_word_in_position = (words[3] == "is" or words[3] == "are")
+                if is_be_word_in_position and is_start_with_dep_type_word:
+                    if team["knowledge_pattern"] == "others":
+                        team["knowledge_pattern"] = "concept"
 
         result_json.append(team)
     write_json_to_file(output_json_file, result_json)

@@ -434,13 +434,64 @@ def export_return_description_from_method_for_jdk():
                 class_name = str(class_query[0][0])
 
                 if type == "Method":
-                    temp["API_name"] = class_name + "." + name + "()"
+                    temp["API_name"] = class_name + "." + name + "()" + "#ReturnValue"
                 else:
-                    temp["API_name"] = class_name + "." + name
+                    temp["API_name"] = class_name + "." + name + "#ReturnValue"
                 temp["API_name_full_declaration"] = full_declaration
                 temp["parent_API_name"] = class_name
                 temp["API_Type"] = type
                 temp["text_title"] = "returns"
+                temp["text"] = description
+
+                result.append(temp)
+            except Exception as e:
+                print(Exception, ": ", e)
+    except Exception as e:
+        print(Exception, ": ", e)
+    return result
+
+
+def export_parameter_from_method_for_jdk():
+    '''export the short description from jdk for method'''
+    result = []
+    # todo complete this method
+    try:
+        cur.execute("select Name,Description,Class_id,Method_id,Type_string from jdk_parameter")
+        lists = cur.fetchall()
+        for each_list in lists:
+            try:
+                temp = {}
+                name = each_list[0]
+                description = each_list[1]
+                description = clean_html_text_with_replacement(description)
+
+                if description is None or description is "":
+                    continue
+                class_id = each_list[2]
+
+                method_id = each_list[3]
+                type_string = each_list[4]
+
+                sql = "select name from jdk_method where method_id = " + str(method_id)
+                cur.execute(sql)
+                method_query = cur.fetchone()
+                method_name = method_query[0]
+                method_name = clean_html_text(method_name)
+
+                sql = "select name from jdk_class where class_id = " + str(class_id)
+                cur.execute(sql)
+                class_query = cur.fetchone()
+                class_name = str(class_query[0])
+
+                parameter_name = class_name + "." + method_name + "()" + "#parameter#" + name
+
+                temp["API_name"] = parameter_name
+                temp[
+                    "API_name_full_declaration"] = class_name + "." + method_name + "()" + "#parameter#" + type_string + "_" + name
+                temp["parent_API_name"] = class_name
+                temp["API_Type"] = "Method"
+                temp["text_title"] = "parameters"
+                temp["sub_title"] = name
                 temp["text"] = description
 
                 result.append(temp)
