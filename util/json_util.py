@@ -4,7 +4,7 @@ import random
 import sys
 import traceback
 
-from data_process import sentence_split
+import nltk
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -282,3 +282,9 @@ def conbine_json_file(json_file_name_list):
             data = json.load(f)
             conbined_json.extend(data)
     return conbined_json
+
+
+def sentence_split(descriptions):
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    description_list = tokenizer.tokenize(descriptions)
+    return description_list
