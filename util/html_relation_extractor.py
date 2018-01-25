@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 
+from util.code_text_process import get_main_contain_body, remove_all_comment_block
 from util.relation import Relation
 
 
@@ -67,7 +68,12 @@ def extract_relation_from_html(html_text, base_url=""):
     soup = BeautifulSoup(html_text, "lxml")
     relations_set = set([])
 
+    soup = get_main_contain_body(soup)
+    remove_all_comment_block(soup)
     code_tag_list = soup.find_all(['code', 'pre'])
+
+
+
     for code_element in code_tag_list:
         '''
         for all <a> in <code>.

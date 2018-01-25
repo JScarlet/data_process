@@ -42,19 +42,23 @@ def clean_html_text_with_replacement(html_text):
 
     soup = BeautifulSoup(html_text, "lxml")
 
-    contain_tags = soup.find_all("div", class_="contentContainer")
-    if contain_tags and len(contain_tags) >= 1:
-        for contain_tag in contain_tags:
-            soup = contain_tag
-    all_comments = soup.find_all(string=lambda text: isinstance(text, Comment))
-    for comment in all_comments:
-        comment.extract()
+    soup = get_main_contain_body(soup)
 
-    codeTags = soup.find_all(name=["pre", 'blockquote'])
+    remove_all_comment_block(soup)
 
-    for tag in codeTags:
-        tag.string = "@C@ . "
+    replace_code_tag(soup)
 
+    replace_li_tag(soup)
+
+    # todo: the sentence may lack of Punctuation mark in every <p> tag end. it will be
+
+    cleanText = soup.get_text()
+    cleanText = clean_format(cleanText)
+
+    return cleanText
+
+
+def replace_li_tag(soup):
     list_groups = soup.find_all(name=["ol", "ul"])
     for list_group in list_groups:
         list_items = list_group.find_all("li")
@@ -63,9 +67,25 @@ def clean_html_text_with_replacement(html_text):
             item.string = "{0}.{1}\n.".format(str(num), item.string)
             num = num + 1
 
-    # todo: the sentence may lack of Punctuation mark in every <p> tag end. it will be
 
-    cleanText = soup.get_text()
-    cleanText = clean_format(cleanText)
+def replace_code_tag(soup):
+    codeTags = soup.find_all(name=["pre", 'blockquote'])
+    for tag in codeTags:
+        tag.string = "@C@ . "
 
-    return cleanText
+
+def remove_all_comment_block(soup):
+    all_comments = soup.find_all(string=lambda text: isinstance(text, Comment))
+    for comment in all_comments:
+        comment.extract()
+
+
+def get_main_contain_body(soup):
+    contain_tags = soup.find_all("div", class_="contentContainer")
+    if contain_tags and len(contain_tags) >= 1:
+        for contain_tag in contain_tags:
+            soup = contain_tag
+    jd_content = soup.find('div', id="jd-content")
+    if contain_tags:
+        soup = jd_content
+    return soup
