@@ -2,6 +2,7 @@ import codecs
 import json
 import random
 import sys
+import traceback
 
 from data_process import sentence_split
 
@@ -20,6 +21,22 @@ def read_json_from_file(file_name):
     with codecs.open(file_name, 'r', 'utf-8') as f:
         data = json.load(f)
     return data
+
+
+def api_text_json_sentence_split_for_json_object(data_json):
+    result_json = []
+    for each_data in data_json:
+        api_text = each_data["text"]
+        if api_text is not None:
+            api_text_list = sentence_split(api_text)
+            for each_description in api_text_list:
+                if each_description == "":
+                    continue
+                team = each_data.copy()
+                team['text'] = each_description
+                team['sentence_index'] = api_text_list.index(each_description) + 1
+                result_json.append(team)
+    return result_json
 
 
 def api_text_json_sentence_split(input_json_file, output_json_file=None):
@@ -213,11 +230,13 @@ def split_api_text_json_by_knowledge_pattern(input_json_file):
     data_json = read_json_from_file(input_json_file)
     for each_data in data_json:
         try:
+            if "knowledge_pattern" not in each_data.keys():
+                each_data["knowledge_pattern"] = "others"
             if each_data["knowledge_pattern"] not in result_json.keys():
                 result_json[each_data["knowledge_pattern"]] = []
             result_json[each_data["knowledge_pattern"]].append(each_data)
         except Exception:
-            print Exception, str(Exception)
+            traceback.print_exc()
 
     for type in result_json.keys():
         write_json_to_file(type + "_" + input_json_file, result_json[type])

@@ -1,0 +1,4 @@
+from util.json_util import split_api_text_json_by_knowledge_pattern
+
+input_json_file = "simple_annotated_all_description.json"
+split_api_text_json_by_knowledge_pattern(input_json_file)
