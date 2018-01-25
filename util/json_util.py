@@ -96,7 +96,7 @@ def generate_annotated_json_object(data_json):
             if len(words) >= 3:
                 # the
                 is_start_with_dep_type_word = (
-                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                    words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
                 is_be_word_in_position = (words[2] == "is" or words[2] == "are")
                 if is_be_word_in_position and is_start_with_dep_type_word:
                     if team["knowledge_pattern"] == "others":
@@ -105,7 +105,7 @@ def generate_annotated_json_object(data_json):
             if len(words) >= 4:
                 # the
                 is_start_with_dep_type_word = (
-                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                    words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
                 is_be_word_in_position = (words[3] == "is" or words[3] == "are")
                 if is_be_word_in_position and is_start_with_dep_type_word:
                     if team["knowledge_pattern"] == "others":
@@ -173,7 +173,7 @@ def annotated_by_sentence_index(input_json_file, output_json_file=None):
             if len(words) >= 3:
                 # the
                 is_start_with_dep_type_word = (
-                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                    words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
                 is_be_word_in_position = (words[2] == "is" or words[2] == "are")
                 if is_be_word_in_position and is_start_with_dep_type_word:
                     if team["knowledge_pattern"] == "others":
@@ -182,7 +182,7 @@ def annotated_by_sentence_index(input_json_file, output_json_file=None):
             if len(words) >= 4:
                 # the
                 is_start_with_dep_type_word = (
-                words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
+                    words[0].lower() == "a" or words[0].lower() == "an" or words[0].lower() == "the")
                 is_be_word_in_position = (words[3] == "is" or words[3] == "are")
                 if is_be_word_in_position and is_start_with_dep_type_word:
                     if team["knowledge_pattern"] == "others":
@@ -253,3 +253,13 @@ def parse_api_text_json_to_fast_text_train_format(input_json_file):
                 output.write("\n")
             except Exception:
                 print Exception, str(Exception)
+
+
+def conbine_json_file(json_file_name_list):
+    conbined_json = []
+    for json_file_name in json_file_name_list:
+        # Reading data back
+        with codecs.open(json_file_name, 'r', 'utf-8') as f:
+            data = json.load(f)
+            conbined_json.extend(data)
+    return conbined_json

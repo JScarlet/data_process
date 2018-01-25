@@ -1,7 +1,7 @@
 from util.json_util import generate_annotated_json_object, write_json_to_file, read_json_from_file
 
 package_short_description_json = read_json_from_file("jdk_package_short_description.json")
-package_long_description_json = read_json_from_file("jdk_package_long_description.json")
+package_long_description_json = read_json_from_file("jdk_package_detail_description.json")
 class_short_description_json = read_json_from_file("jdk_class_short_description.json")
 class_long_description_json = read_json_from_file("jdk_class_detail_description.json")
 method_long_description_json = read_json_from_file("jdk_method_detail_description.json")
