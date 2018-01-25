@@ -14,10 +14,16 @@ if len(sys.argv) <= 1:
 json_file_name = sys.argv[1]
 
 # Reading data back
-with open(json_file_name, 'r') as f:
+with codecs.open(json_file_name, 'r', 'utf-8') as f:
     data = json.load(f)
 
-with codecs.open('jdk_corpus.txt', 'w', 'utf-8') as corpus_file:
+out_put_file_name = sys.argv[2]
+with codecs.open(out_put_file_name, 'w', 'utf-8') as corpus_file:
     for text_part_json in data:
-        corpus_file.writelines(text_part_json['text'].replace('\n', " "))
+        all_text = text_part_json['text']
+        # sentences = sentence_split(all_text)
+        # for sentence in sentences:
+        #     corpus_file.write(sentence)
+        #     corpus_file.write("\n")
+        corpus_file.write(all_text)
         corpus_file.write("\n")
